@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Articlever</title>
+		<meta name="author" content="Simon Bernard, Ivan Klapka, François Rozet">
+		<link rel="icon" type="image/png" href="./resources/images/png/favicon.png">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+		<link rel="stylesheet" href="./resources/css/default.css">
+	</head>
+	<body>
+		<section class="hero">
+			<div class="container">
+				<div class="title">Articlever</div>
+				<div class="search">
+					<input type="text" placeholder="Search">
+					<button onclick="spin(this);">
+						<i class="fas fa-search"></i>
+					</button>
+				</div>
+			</div>
+		</section>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			function spin(e) {
+				$(e).toggleClass('hue');
+			}
+		</script>
+	</body>
+</html>
