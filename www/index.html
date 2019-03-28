@@ -3,7 +3,7 @@
 <html lang="fr">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Articlever</title>
+		<title>Arti-clever</title>
 		<meta name="author" content="Simon Bernard, Ivan Klapka, François Rozet">
 		<link rel="icon" type="image/png" href="./resources/images/png/favicon.png">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -11,21 +11,103 @@
 		<link rel="stylesheet" href="./resources/css/default.css">
 	</head>
 	<body>
-		<section class="hero">
+		<section class="hero" id="hero">
 			<div class="container">
-				<div class="title">Articlever</div>
+				<div class="title special">Arti-clever</div>
 				<div class="search">
-					<input type="text" placeholder="Search">
-					<button onclick="spin(this);">
+					<input class="lead" id="search" type="text" placeholder="Recherche">
+					<button>
 						<i class="fas fa-search"></i>
 					</button>
 				</div>
 			</div>
 		</section>
+		<div id="help"></div>
+		<section style="display: none;" id="explanation">
+			<div class="container">
+				<p class="mb-2 lead">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter.</p>
+				<p class="mb-2 lead">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
+				<p class="lead">Voici les tables de la base de données et leurs attributs :</p>
+				<hr class="mb-0 mt-4">
+				<div class="table-responsive-xl">
+					<table id="tables" class="table table-hover table-borderless mb-0 lead">
+					</table>
+				</div>
+				<hr class="mt-0 mb-4">
+				<p class="mb-2 lead">Par exemple, pour rechercher les articles dont le titre contient <samp>physique</samp>, la date de publication est <samp>18/03/1999</samp> et le matricule de l'auteur est <samp>13</samp> :</p>
+				<div class="special" style="margin: 0 auto; width: 66%;">
+					<p class="mb-2 code" style="text-align: center;">
+						articles, titre=physique, date_publication=18/03/1999, matricule_auteur=13
+					</p>
+				</div>
+			</div>
+		</section>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script type="text/javascript">
-			function spin(e) {
-				$(e).toggleClass('hue');
+			var tables;
+			
+			$.getJSON('resources/json/tables.json', function(json) {
+				tables = json;
+
+				$.each(tables, function(key, value) {
+					$('#tables').append('<tr type="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
+					$.each(value, function(subkey, subvalue) {
+						$('[type='+ key +']').append('<td>' + subkey + '</td>');
+					});
+				});
+			});
+
+
+			$('#help').click(function() {
+				$('#hero').toggleClass('hero');
+				$('#explanation').fadeToggle(500);
+			});
+
+			$('#search + button').click(function() {
+				$(this).toggleClass('hue');
+				if ($('#search').val() != '') {
+					var input = parse($('#search').val());
+
+					if (isset(tables[input.table])) {
+						var table = input.table;
+						delete input.table;
+
+						var w = 0;
+						$.each(input, function(key, value) {
+							if (!isset(tables[table][key])) {
+								console.log('Wrong attribute "' + key + '"');
+								w = 1;
+							}
+						});
+
+						if (w == 0) {
+							input['table'] = table;
+							console.log(input);
+						}
+					} else {
+						console.log('Wrong table "' + input.table + '"');
+					}
+				}
+			});
+
+			function isset(e) {
+				return typeof(e) != 'undefined' && e !== null;
+			}
+
+			function parse(str) {
+				var spl = str.split(',');
+				var input = {
+					'table': spl.shift()
+				};
+
+				var e, i;
+				while (spl.length > 0) {
+					e = spl.shift();
+					i = e.indexOf('=');
+					input[$.trim(e.slice(0, i))] = $.trim(e.slice(i + 1));
+				}
+
+				return input;
 			}
 		</script>
 	</body>

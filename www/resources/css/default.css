@@ -1,5 +1,10 @@
 *:focus, *:active {
 	outline: none !important;
+	box-shadow: none !important;
+}
+
+hr {
+	border-width: 1.5px;
 }
 
 /* text */
@@ -18,9 +23,19 @@
 
 /* hero */
 
+#hero {
+	-webkit-transition: margin 0.25s linear;
+	margin-bottom: 5vh;
+}
+
 .hero {
-	margin-top: 50vh;
-	-webkit-transform: translate(0, -75%);
+	margin-top: 30vh;
+}
+
+.special {
+	background: -webkit-linear-gradient(right, #9F2FFF, #0BB1D3);
+	-webkit-background-clip: text;
+	color: transparent;
 }
 
 .title {
@@ -28,11 +43,8 @@
 	font-size: 6rem;
 	font-weight: 500;
 	line-height: 1;
-	margin: 0 auto;
-	width: 8ch;
-	background: -webkit-linear-gradient(right, #9F2FFF, #0BB1D3);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+	margin: 1.5rem auto;
+	width: 9ch;
 }
 
 /* search */
@@ -41,7 +53,7 @@
 	background: #F1F3F4;
 	border-radius: 2em;
 	padding: 0.5em 1em;
-	margin: 2rem auto 0 auto;
+	margin: 0 auto;
 	width: 66%;
 }
 
@@ -51,6 +63,7 @@
 
 .search input {
 	border: none;
+	padding: 0 0 0.075em 0;
 	background: transparent;
 	width: calc(100% - 1.5rem);
 }
@@ -69,6 +82,45 @@
 
 .hue {
 	animation-name: hue;
-  	animation-duration: 2s;
-  	animation-iteration-count: infinite;
+	animation-duration: 2s;
+	animation-iteration-count: infinite;
 }
+
+/* help */
+
+#help {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	-webkit-transform: translate(-20%, 0);
+	width: 3rem;
+	height: 3rem;
+	margin: 1rem;
+	background: -webkit-linear-gradient(right, #9F2FFF, #0BB1D3);
+	-webkit-mask-image: url(../images/svg/question.svg);
+}
+
+#help:hover {
+	cursor: pointer;
+}
+
+/* explanation */
+
+#explanation {
+	margin: 0 0 15vh 0;
+}
+
+.code {
+	font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-size: 1.2em;
+}
+
+.table-hover tbody tr:hover {
+	background-color: #F1F3F4;
+}
+
+.key {
+	font-weight: 400;
+}
+
+.unique {}
