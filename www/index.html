@@ -38,7 +38,7 @@
 						<p>Formulaire pour ajouter un article dans la base de données.</p>
 					</div>
 					<div>
-						<h5 class="special"><a href="#authors">Auteurs impliqués</a></h5>
+						<h5 class="special"><a href="#authors">Participants actifs</a></h5>
 						<p>Les chercheurs qui sont auteurs d'au moins un article à chaque conférence à laquelle ils ont assisté.</p>
 					</div>
 					<div>
@@ -51,6 +51,17 @@
 		<section id="publications">
 			<div class="container">
 				<div class="sub-title special">Ensemble de publications</div>
+				<div class="input-group input-group-sm mb-3 search_matricule">
+					<select class="custom-select" id="matricule">
+						<option selected>Choisir...</option>
+					</select>
+				</div>
+				<table id="q2b" class="table table-sm table-borderless">
+					<thead>
+						<tr class="special"><th scope="column">Titre</th><th scope="column">Date_publication</th><th scope="column">Type</th><th scope="column">Seconds auteurs</th></tr>
+					</thead>
+					<tbody></tbody>
+				</table>
 			</div>
 		</section>
 		<section id="new-article">
@@ -86,10 +97,10 @@
 		</section>
 		<section id="authors">
 			<div class="container">
-				<div class="sub-title special">Auteurs impliqués</div>
+				<div class="sub-title special">Participants actifs</div>
 				<table id="q2d" class="table table-sm table-borderless">
 					<thead>
-						<tr class="special"><th scope="column">Nom</th><th scope="column">Prénom</th><th scope="column">Matricule</th></tr>
+						<tr class="special"><th scope="column">Matricule</th><th scope="column">Nom</th><th scope="column">Prénom</th></tr>
 					</thead>
 					<tbody></tbody>
 				</table>
@@ -108,7 +119,7 @@
 		</section>
 		<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-xl">
-				   <div class="modal-content">
+					 <div class="modal-content">
 					<p class="mb-2">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter.</p>
 					<p class="mb-2">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
 					<p class="mb-2">Voici les tables de la base de données et leurs attributs :</p>
@@ -128,14 +139,27 @@
 			
 			$.ajax({
 				url:"include/scheme.php",
-				success:function(json){
-					tables = json;
-
+				success:function(result){
+					tables = result;
 					$.each(tables, function(key, value) {
 						$('#tables').append('<tr table="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
 						$.each(value, function(subkey, subvalue) {
 							$('[table='+ key +']').append('<td>' + subvalue + '</td>');
 						});
+					});
+				}
+			});
+
+			var auteurs;
+
+			$.ajax({
+				type: "GET",
+				url:"include/questions/sql.php",
+				data: {file: 'authors'},
+				success:function(result) {
+					auteurs = result;
+					$.each(auteurs, function(key, value) {
+						$('#matricule').append('<option value="' + value[0] + '">' + value[0] + ' - ' + value[1] + ' ' + value[2] + '</option>');
 					});
 				}
 			});
@@ -164,9 +188,26 @@
 				return input;
 			}
 		</script>
+		<script type="text/javascript" name="q2b">
+			$('#matricule').change(function() {
+				$.ajax({
+					type: "GET",
+					url:"include/questions/q2b.php",
+					data: {matricule: $('#matricule').val()},
+					success:function(result) {
+						$('#q2b > tbody').html('');
+						$.each(result, function(key, value) {
+							$('#q2b > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td><td>' + value[2] + '</td><td>' + value[3] + '</td></tr>');
+						});
+					}
+				});
+			});
+		</script>
 		<script type="text/javascript" name="q2d">
 			$.ajax({
-				url:"include/questions/q2d.php",
+				type: "GET",
+				url:"include/questions/sql.php",
+				data: {file: 'questions/q2d'},
 				success:function(result) {
 					$.each(result, function(key, value) {
 						$('#q2d > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td><td>' + value[2] + '</td></tr>');
@@ -176,7 +217,9 @@
 		</script>
 		<script type="text/javascript" name="q2e">
 			$.ajax({
-				url:"include/questions/q2e.php",
+				type: "GET",
+				url:"include/questions/sql.php",
+				data: {file: 'questions/q2e'},
 				success:function(result) {
 					$.each(result, function(key, value) {
 						$('#q2e > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td></tr>');
