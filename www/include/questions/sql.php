@@ -1,10 +1,20 @@
 <?php
 
+if (isset($_GET['file'])) {
+	$file = '../../resources/sql/'.$_GET['file'].'.sql';
+	if (!file_exists($file)) {
+		echo "Wrong file name.";
+		exit;
+	}
+} else {
+	echo "Unspecified file name.";
+	exit;
+}
+
 header('Content-Type: application/json');
 
 include('../connect.php');
 
-$file = '../../resources/sql/questions/q2d.sql';
 $sql = file_get_contents($file);
 
 $response = $connect->query($sql);
