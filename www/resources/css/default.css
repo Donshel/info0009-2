@@ -154,40 +154,17 @@ samp {
 	color: inherit;
 }
 
-/* podium */
+/* authors */
 
-.podium {
-	display: flex;
-}
-
-.step {
-	text-align: center;
-	font-weight: bold;
-	vertical-align: middle;
-	margin: 0 auto;
-	height: 6rem;
-	line-height: 6rem;
+#authors .container {
+	width: 30%;
 }
 
-.step:nth-child(1) {
-	font-size: 1.3rem;
-}
-.step:nth-child(2) {
-	font-size: 2.197rem;
-	color: #B87A47;
-}
-.step:nth-child(3) {
-	font-size: 3.71293rem;
-	color: #FDDA36;
-}
-.step:nth-child(4) {
-	font-size: 2.8561rem;
-	color: #9E9CAA;
-}
-.step:nth-child(5) {
-	font-size: 1.69rem;
-}
+/* subjects */
 
+#subjects .container {
+	width: 20%;
+}
 
 /* help-modal */
 
@@ -196,8 +173,4 @@ samp {
 	padding: 1.5rem;
 	border: none;
 	border-radius: 0;
-}
-
-.table-hover tbody tr:hover {
-	background-color: #F1F3F4;
 }
