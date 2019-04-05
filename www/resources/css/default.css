@@ -7,6 +7,15 @@ hr {
 	border-width: 1.5px;
 }
 
+section {
+	padding-top: 50vh;
+	min-height: 100vh;
+}
+
+section > .container {
+	-webkit-transform: translate(0, -50%);
+}
+
 /* text */
 
 .text-bold {
@@ -21,16 +30,16 @@ hr {
 	color: #838E95;
 }
 
+samp {
+	font-weight: bold;
+}
+
+.code {
+	font-weight: bold;
+	font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 /* hero */
-
-#hero {
-	-webkit-transition: margin 0.25s linear;
-	margin-bottom: 5vh;
-}
-
-.hero {
-	margin-top: 30vh;
-}
 
 .special {
 	background: -webkit-linear-gradient(right, #9F2FFF, #0BB1D3);
@@ -43,7 +52,7 @@ hr {
 	font-size: 6rem;
 	font-weight: 500;
 	line-height: 1;
-	margin: 1.5rem auto;
+	margin: 0 auto;
 	width: 9ch;
 }
 
@@ -53,7 +62,7 @@ hr {
 	background: #F1F3F4;
 	border-radius: 2em;
 	padding: 0.5em 1em;
-	margin: 0 auto;
+	margin: 1.5rem auto;
 	width: 66%;
 }
 
@@ -89,10 +98,10 @@ hr {
 /* help */
 
 #help {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	-webkit-transform: translate(-20%, 0);
+	position: absolute;
+	top: 0;
+	right: 0;
+	-webkit-transform: translate(15%, 0);
 	width: 3rem;
 	height: 3rem;
 	margin: 1rem;
@@ -104,23 +113,71 @@ hr {
 	cursor: pointer;
 }
 
-/* explanation */
+/* plan */
 
-#explanation {
-	margin: 0 0 15vh 0;
+.plan {
+	width: 75%;
+	margin: 0 auto;
+	display: flex;
 }
 
-.code {
-	font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-	font-size: 1.2em;
+.plan > div {
+	width: 10rem;
+	margin: 0 auto;
+}
+
+.plan a {
+	color: initial;
+}
+
+.plan a:hover {
+	color: inherit;
+}
+
+/* podium */
+
+.podium {
+	display: flex;
+}
+
+.step {
+	text-align: center;
+	font-weight: bold;
+	vertical-align: middle;
+	margin: 0 auto;
+	height: 6rem;
+	line-height: 6rem;
+}
+
+.step:nth-child(1) {
+	font-size: 1.3rem;
+}
+.step:nth-child(2) {
+	font-size: 2.197rem;
+	color: #B87A47;
+}
+.step:nth-child(3) {
+	font-size: 3.71293rem;
+	color: #FDDA36;
+}
+.step:nth-child(4) {
+	font-size: 2.8561rem;
+	color: #9E9CAA;
+}
+.step:nth-child(5) {
+	font-size: 1.69rem;
+}
+
+
+/* help-modal */
+
+#help-modal .modal-content {
+	background-color: white;
+	padding: 1.5rem;
+	border: none;
+	border-radius: 0;
 }
 
 .table-hover tbody tr:hover {
 	background-color: #F1F3F4;
 }
-
-.key {
-	font-weight: 400;
-}
-
-.unique {}

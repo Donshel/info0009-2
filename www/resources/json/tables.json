@@ -55,7 +55,7 @@
 		"url":0,
 		"matricule":1
 	},
-	"sujets":{
+	"sujets_articles":{
 		"url":0,
 		"sujet":0
 	}

@@ -9,40 +9,125 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
 		<link rel="stylesheet" href="./resources/css/default.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
 	</head>
 	<body>
-		<section class="hero" id="hero">
+		<section id="hero">
 			<div class="container">
 				<div class="title special">Arti-clever</div>
 				<div class="search">
-					<input class="lead" id="search" type="text" placeholder="Recherche">
+					<input id="search" type="text" placeholder="Recherche">
 					<button>
 						<i class="fas fa-search"></i>
 					</button>
 				</div>
 			</div>
+			<div id="help" onclick="$('#help-modal').modal('toggle');"></div>
 		</section>
-		<div id="help"></div>
-		<section style="display: none;" id="explanation">
+		<section id="plan">
 			<div class="container">
-				<p class="mb-2 lead">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter.</p>
-				<p class="mb-2 lead">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
-				<p class="lead">Voici les tables de la base de données et leurs attributs :</p>
-				<hr class="mb-0 mt-4">
-				<div class="table-responsive-xl">
-					<table id="tables" class="table table-hover table-borderless mb-0 lead">
-					</table>
-				</div>
-				<hr class="mt-0 mb-4">
-				<p class="mb-2 lead">Par exemple, pour rechercher les articles dont le titre contient <samp>physique</samp>, la date de publication est <samp>18/03/1999</samp> et le matricule de l'auteur est <samp>13</samp> :</p>
-				<div class="special" style="margin: 0 auto; width: 66%;">
-					<p class="mb-2 code" style="text-align: center;">
-						articles, titre=physique, date_publication=18/03/1999, matricule_auteur=13
-					</p>
+				<div class="plan">
+					<div>
+						<h5 class="special"><a href="#publications">Ensemble de publications</a></h5>
+						<p>Trouver l'ensemble des publications d'un auteur à partir de son matricule.</p>
+					</div>
+					<div>
+						<h5 class="special"><a href="#new-article">Nouvel article</a></h5>
+						<p>Formulaire pour ajouter un article dans la base de données.</p>
+					</div>
+					<div>
+						<h5 class="special"><a href="#participants">Participants actifs</a></h5>
+						<p>Les chercheurs qui sont auteurs d'au moins un article à chaque conférence à laquelle ils ont assisté.</p>
+					</div>
+					<div>
+						<h5 class="special"><a href="#subjects">Sujets populaires</a></h5>
+						<p>Les sujets les plus étudiés au cours des 5 conférences les plus populaires depuis 2012.</p>
+					</div>
 				</div>
 			</div>
 		</section>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<section id="publications">
+			<div class="container">
+				Ensemble de publications
+			</div>
+		</section>
+		<section id="new-article">
+			<div class="container">
+				<form>
+					<div class="form-group">
+						<label>URL</label>
+						<input type="url" name="url" class="form-control" placeholder="https://exemple.com/" required>
+					</div>
+					<div class="form-group">
+						<label>DOI</label>
+						<input type="number" name="doi" class="form-control" placeholder="314159265" required>
+					</div>
+					<div class="form-group">
+						<label>Titre</label>
+						<input type="text" name="titre" class="form-control" placeholder="Le féminisme ou comment cassez les couilles sans les toucher." required>
+					</div>
+					<div class="form-group">
+						<label>Date de publication</label>
+						<input type="date" name="date_publication" class="form-control" required>
+					</div>
+					<div class="form-group">
+						<label>Matricule de l'auteur</label>
+						<input type="number" name="matricule_auteur" class="form-control" placeholder="42" required>
+					</div>
+					<div class="custom-control custom-switch">
+						<input type="checkbox" class="custom-control-input" id="switch" name="switch">
+						<label class="custom-control-label" data-on="Artice de journal" data-off="Artice de conférence">Artice de journal</label>
+					</div>
+				</form>
+			</div>
+		</section>
+		<section id="participants">
+			<div class="container">
+				Participants actifs
+			</div>
+		</section>
+		<section id="subjects">
+			<div class="container">
+				<div class="podium">
+					<div class="step">
+						Physique
+					</div>
+					<div class="step">
+						Physique
+					</div>
+					<div class="step">
+						Physique
+					</div>
+					<div class="step">
+						Physique
+					</div>
+					<div class="step">
+						Physique
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+				   <div class="modal-content">
+					<p class="mb-2">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter.</p>
+					<p class="mb-2">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
+					<p>Voici les tables de la base de données et leurs attributs :</p>
+					<hr class="mb-0 mt-4">
+					<div class="table-responsive-xl">
+						<table id="tables" class="table table-hover table-borderless mb-0">
+						</table>
+					</div>
+					<hr class="mt-0 mb-4">
+					<p class="mb-2">Par exemple, pour rechercher les articles dont le titre contient <samp>physique</samp>, la date de publication est <samp>18/03/1999</samp> et le matricule de l'auteur est <samp>13</samp> :</p>
+					<div class="special code" style="margin: 0 auto; width: 66%; text-align: center;">
+						articles, titre=physique, date_publication=18/03/1999, matricule_auteur=13
+					</div>
+				</div>
+			</div>
+		</div>
 		<script type="text/javascript">
 			var tables;
 			
@@ -55,12 +140,6 @@
 						$('[type='+ key +']').append('<td>' + subkey + '</td>');
 					});
 				});
-			});
-
-
-			$('#help').click(function() {
-				$('#hero').toggleClass('hero');
-				$('#explanation').fadeToggle(500);
 			});
 
 			$('#search + button').click(function() {
