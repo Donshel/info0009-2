@@ -1,0 +1,10 @@
+DELETE FROM articles_journaux;
+DELETE FROM articles_conferences;
+DELETE FROM sujets_articles;
+DELETE FROM seconds_auteurs;
+DELETE FROM articles;
+DELETE FROM participations;
+DELETE FROM auteurs;
+DELETE FROM revues;
+DELETE FROM conferences;
+DELETE FROM institutions;

@@ -50,11 +50,12 @@
 		</section>
 		<section id="publications">
 			<div class="container">
-				Ensemble de publications
+				<div class="sub-title special">Ensemble de publications</div>
 			</div>
 		</section>
 		<section id="new-article">
 			<div class="container">
+				<div class="sub-title special">Nouvel article</div>
 				<form>
 					<div class="form-group">
 						<label>URL</label>
@@ -131,42 +132,22 @@
 		<script type="text/javascript">
 			var tables;
 			
-			$.getJSON('resources/json/tables.json', function(json) {
-				tables = json;
+			$.ajax({
+				url:"include/scheme.php",
+				success:function(json){
+					tables = json;
 
-				$.each(tables, function(key, value) {
-					$('#tables').append('<tr type="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
-					$.each(value, function(subkey, subvalue) {
-						$('[type='+ key +']').append('<td>' + subkey + '</td>');
+					$.each(tables, function(key, value) {
+						$('#tables').append('<tr table="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
+						$.each(value, function(subkey, subvalue) {
+							$('[table='+ key +']').append('<td>' + subvalue + '</td>');
+						});
 					});
-				});
+				}
 			});
 
 			$('#search + button').click(function() {
 				$(this).toggleClass('hue');
-				if ($('#search').val() != '') {
-					var input = parse($('#search').val());
-
-					if (isset(tables[input.table])) {
-						var table = input.table;
-						delete input.table;
-
-						var w = 0;
-						$.each(input, function(key, value) {
-							if (!isset(tables[table][key])) {
-								console.log('Wrong attribute "' + key + '"');
-								w = 1;
-							}
-						});
-
-						if (w == 0) {
-							input['table'] = table;
-							console.log(input);
-						}
-					} else {
-						console.log('Wrong table "' + input.table + '"');
-					}
-				}
 			});
 
 			function isset(e) {
