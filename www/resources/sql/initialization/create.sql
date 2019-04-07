@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS auteurs(
 	matricule INT NOT NULL,
 	nom VARCHAR(128) NOT NULL,
 	prenom VARCHAR(128) NOT NULL,
-	debut_doctorat DATE NOT NULL,
+	debut_doctorat SMALLINT NOT NULL,
 	nom_institution VARCHAR(128) NOT NULL,
 	PRIMARY KEY (matricule),
 	FOREIGN KEY (nom_institution) REFERENCES institutions (nom)

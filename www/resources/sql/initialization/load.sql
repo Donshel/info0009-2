@@ -20,9 +20,7 @@ LOAD DATA LOCAL INFILE '/home/s161024/WWW/resources/csv/load/auteurs.csv' INTO T
 CHARACTER SET 'UTF8'
 FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n'
-IGNORE 1 LINES
-(`matricule`, `nom`, `prenom`, @DATE_STR, `nom_institution`)
-SET `debut_doctorat` = STR_TO_DATE(@DATE_STR, '%d/%m/%Y');
+IGNORE 1 LINES;
 
 LOAD DATA LOCAL INFILE '/home/s161024/WWW/resources/csv/load/participations_conferences.csv' INTO TABLE participations
 CHARACTER SET 'UTF8'
