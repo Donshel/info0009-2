@@ -20,9 +20,13 @@
 				<div class="search">
 					<input id="search" type="text" placeholder="Recherche">
 					<button>
-						<i class="fas fa-search"></i>
+						<i class="fas fa-search special"></i>
 					</button>
 				</div>
+				<table id="q2a" class="table table-hover table-sm table-borderless">
+					<thead><tr class="special" ></tr></thead>
+					<tbody></tbody>
+				</table>
 			</div>
 			<div id="help" onclick="$('#help-modal').modal('toggle');"></div>
 		</section>
@@ -56,9 +60,9 @@
 						<option selected>Choisir...</option>
 					</select>
 				</div>
-				<table id="q2b" class="table table-sm table-borderless">
+				<table id="q2b" class="table table-hover table-sm table-borderless">
 					<thead>
-						<tr class="special"><th scope="column">Titre</th><th scope="column">Date_publication</th><th scope="column">Type</th><th scope="column">Seconds auteurs</th></tr>
+						<tr class="special"><th scope="column">Titre</th><th scope="column">Date de publication</th><th scope="column">Type</th><th scope="column">Seconds auteurs</th></tr>
 					</thead>
 					<tbody></tbody>
 				</table>
@@ -98,7 +102,7 @@
 		<section id="authors">
 			<div class="container">
 				<div class="sub-title special">Participants actifs</div>
-				<table id="q2d" class="table table-sm table-borderless">
+				<table id="q2d" class="table table-hover table-sm table-borderless">
 					<thead>
 						<tr class="special"><th scope="column">Matricule</th><th scope="column">Nom</th><th scope="column">Prénom</th></tr>
 					</thead>
@@ -109,7 +113,7 @@
 		<section id="subjects">
 			<div class="container">
 				<div class="sub-title special">Sujets populaires</div>
-				<table id="q2e" class="table table-sm table-borderless">
+				<table id="q2e" class="table table-hover table-sm table-borderless">
 					<thead>
 						<tr class="special" ><th scope="column">Sujets</th><th scope="column">Citations</th></tr>
 					</thead>
@@ -124,7 +128,8 @@
 					<p class="mb-2">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
 					<p class="mb-2">Voici les tables de la base de données et leurs attributs :</p>
 					<div class="table-responsive-xl">
-						<table id="tables" class="table table-sm table-borderless mb-2">
+						<table id="tables" class="table table-hover table-sm table-borderless mb-2">
+							<tbody></tbody>
 						</table>
 					</div>
 					<p class="mb-2">Par exemple, pour rechercher les articles dont le titre contient <samp>physique</samp>, la date de publication est <samp>18/03/1999</samp> et le matricule de l'auteur est <samp>13</samp> :</p>
@@ -135,6 +140,25 @@
 			</div>
 		</div>
 		<script type="text/javascript">
+			function isset(e) {
+				return typeof(e) != 'undefined' && e !== null;
+			}
+
+			function build_html(result) {
+				if (!isset(result) || result.length == 0) {
+					return '<tr><td style="text-align:center;">Aucun résultat.</td></tr>';
+				}
+				var html;
+				$.each(result, function(key, value) {
+					html += '<tr>';
+					$.each(value, function(subkey, subvalue) {
+						html += '<td>' + subvalue + '</td>';
+					});
+					html += '</tr>';
+				});
+				return html;
+			}
+
 			var tables;
 			
 			$.ajax({
@@ -142,7 +166,7 @@
 				success:function(result){
 					tables = result;
 					$.each(tables, function(key, value) {
-						$('#tables').append('<tr table="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
+						$('#tables > tbody').append('<tr table="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
 						$.each(value, function(subkey, subvalue) {
 							$('[table='+ key +']').append('<td>' + subvalue + '</td>');
 						});
@@ -163,26 +187,44 @@
 					});
 				}
 			});
-
+		</script>
+		<script type="text/javascript" name="q2a">
 			$('#search + button').click(function() {
-				$(this).toggleClass('hue');
+				if (isset($('#search').val())) {
+					var input = parse($('#search').val());
+					if (isset(tables[input['table']])) {
+						$('#hero').css('padding-top', '15vh');
+						$.ajax({
+							type: "GET",
+							url:"include/questions/q2a.php",
+							data: input,
+							success:function(result) {
+								var html = '<tr class="special">';
+								$.each(result[0], function(key, value) {
+									html += '<th scope="column">' + value[0] + '</th>';
+								});
+								html += '</tr>';
+								$('#q2a > thead').html(html);
+								$('#q2a > tbody').html(build_html(result[1]));
+							}
+						});
+					}
+				}
 			});
 
-			function isset(e) {
-				return typeof(e) != 'undefined' && e !== null;
-			}
-
 			function parse(str) {
-				var spl = str.split(',');
+				var constraints = str.split(',');
 				var input = {
-					'table': spl.shift()
+					'table': constraints.shift()
 				};
 
 				var e, i;
-				while (spl.length > 0) {
-					e = spl.shift();
-					i = e.indexOf('=');
-					input[$.trim(e.slice(0, i))] = $.trim(e.slice(i + 1));
+				while (constraints.length > 0) {
+					constraint = constraints.shift();
+					if (constraint.includes('=')) {
+						i = constraint.indexOf('=');
+						input[$.trim(constraint.slice(0, i))] = $.trim(constraint.slice(i + 1));
+					}
 				}
 
 				return input;
@@ -190,17 +232,16 @@
 		</script>
 		<script type="text/javascript" name="q2b">
 			$('#matricule').change(function() {
-				$.ajax({
-					type: "GET",
-					url:"include/questions/q2b.php",
-					data: {matricule: $('#matricule').val()},
-					success:function(result) {
-						$('#q2b > tbody').html('');
-						$.each(result, function(key, value) {
-							$('#q2b > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td><td>' + value[2] + '</td><td>' + value[3] + '</td></tr>');
-						});
-					}
-				});
+				if (isset($('#matricule').val())) {
+					$.ajax({
+						type: "GET",
+						url:"include/questions/q2b.php",
+						data: {matricule: $('#matricule').val()},
+						success:function(result) {
+							$('#q2b > tbody').html(build_html(result));
+						}
+					});
+				}
 			});
 		</script>
 		<script type="text/javascript" name="q2d">
@@ -209,9 +250,7 @@
 				url:"include/questions/sql.php",
 				data: {file: 'questions/q2d'},
 				success:function(result) {
-					$.each(result, function(key, value) {
-						$('#q2d > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td><td>' + value[2] + '</td></tr>');
-					});
+					$('#q2d > tbody').html(build_html(result));
 				}
 			});
 		</script>
@@ -221,9 +260,7 @@
 				url:"include/questions/sql.php",
 				data: {file: 'questions/q2e'},
 				success:function(result) {
-					$.each(result, function(key, value) {
-						$('#q2e > tbody').append('<tr><td>' + value[0] + '</td><td>' + value[1] + '</td></tr>');
-					});
+					$('#q2e > tbody').html(build_html(result));
 				}
 			});
 		</script>
