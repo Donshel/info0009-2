@@ -186,6 +186,18 @@ samp {
 	text-align: center;
 }
 
+/* new-article */
+
+#q2c button[type=submit] {
+	border: none;
+	background: -webkit-linear-gradient(right, #9F2FFF, #0BB1D3);
+	-webkit-transition: opacity 0.1s ease-in-out;
+}
+
+#q2c button[type=submit]:hover {
+	opacity: 0.75;
+}
+
 /* subjects */
 
 #subjects .container {

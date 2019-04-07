@@ -71,32 +71,103 @@
 		<section id="new-article">
 			<div class="container">
 				<div class="sub-title special">Nouvel article</div>
-				<form>
+				<form id="q2c">
 					<div class="form-group">
-						<label>URL</label>
-						<input type="url" name="url" class="form-control" placeholder="https://exemple.com/" required>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">URL</label>
+							</div>
+							<input type="url" name="url" class="form-control" maxlength="255" placeholder="https://exemple.com/" required>
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">DOI</label>
+							</div>
+							<input type="number" name="doi" class="form-control" min="1" max="9223372036854775806" placeholder="314159265" required>
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Titre</label>
+							</div>
+							<input type="text" name="titre" class="form-control" maxlength="255" placeholder="Sur l'importance de l'indentation et pourquoi elle devrait être obligatoire." required>
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Date de publication</label>
+							</div>
+							<input type="date" name="date_publication" class="form-control" required>
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Auteur</label>
+							</div>
+							<select name="matricule_auteur" class="form-control" required>
+								<option selected>Choisir...</option>
+							</select>
+						</div>
 					</div>
-					<div class="form-group">
-						<label>DOI</label>
-						<input type="number" name="doi" class="form-control" placeholder="314159265" required>
+					<hr>
+					<div class="input-group mb-3">
+						<div class="input-group-prepend">
+							<label class="input-group-text">Type</label>
+						</div>
+						<select name="type" id="article_type" class="form-control" required>
+							<option value="articles_journaux" selected>Article de journal</option>
+							<option value="articles_conferences">Article de conférence</option>
+						</select>
 					</div>
-					<div class="form-group">
-						<label>Titre</label>
-						<input type="text" name="titre" class="form-control" placeholder="Le féminisme ou comment cassez les couilles sans les toucher." required>
+					<div class="form-group" id="articles_journaux">
+						<div class="form-row mb-3">
+							<div class="input-group col-md-7">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Revue</label>
+								</div>
+								<select name="nom_revue" class="form-control" required>
+									<option selected>Choisir...</option>
+								</select>
+							</div>
+							<div class="input-group col-md-5">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Journal</label>
+								</div>
+								<input type="number" name="n_journal" class="form-control" min="1" max="32766" placeholder="42" required>
+							</div>
+						</div>
+						<div class="form-row mb-3">
+							<div class="input-group col-md-6">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Page initiale</label>
+								</div>
+								<input type="number" name="pg_debut" id="pg_debut" class="form-control" min="1" max="32766" placeholder="14" required>
+							</div>
+							<div class="input-group col-md-6">
+								<div class="input-group-prepend">
+									<label class="input-group-text">Page finale</label>
+								</div>
+								<input type="number" name="pg_fin" id="pg_fin" min="1" max="32766" class="form-control" placeholder="18" required>
+							</div>
+						</div>
 					</div>
-					<div class="form-group">
-						<label>Date de publication</label>
-						<input type="date" name="date_publication" class="form-control" required>
+					<div class="form-group" id="articles_conferences" style="display: none;">
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Conférence</label>
+							</div>
+							<select name="conference" class="form-control">
+								<option selected>Choisir...</option>
+							</select>
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Présentation</label>
+							</div>
+							<input type="text" name="presentation" class="form-control" placeholder="1h presentation">
+						</div>
 					</div>
-					<div class="form-group">
-						<label>Matricule de l'auteur</label>
-						<input type="number" name="matricule_auteur" class="form-control" placeholder="42" required>
-					</div>
-					<div class="custom-control custom-switch">
-						<input type="checkbox" class="custom-control-input" id="switch" name="switch">
-						<label class="custom-control-label" data-on="Artice de journal" data-off="Artice de conférence">Artice de journal</label>
-					</div>
+					<hr>
+					<button type="submit" class="btn btn-secondary">Ajouter</button>
 				</form>
+				<small></small>
 			</div>
 		</section>
 		<section id="authors">
@@ -182,9 +253,44 @@
 				data: {file: 'authors'},
 				success:function(result) {
 					auteurs = result;
+					var html = '';
 					$.each(auteurs, function(key, value) {
-						$('#matricule').append('<option value="' + value[0] + '">' + value[0] + ' - ' + value[1] + ' ' + value[2] + '</option>');
+						html += '<option value="' + value[0] + '">' + value[0] + ' - ' + value[1] + ' ' + value[2] + '</option>';
 					});
+					$('#matricule').append(html);
+					$('[name=matricule_auteur]').append(html);
+				}
+			});
+
+			var conferences;
+
+			$.ajax({
+				type: "GET",
+				url:"include/questions/sql.php",
+				data: {file: 'conferences'},
+				success:function(result) {
+					conferences = result;
+					var html = '';
+					$.each(conferences, function(key, value) {
+						html += '<option value="' + value + '">' + value[0] + ' (' + value[1] + ')' + '</option>'
+					});
+					$('[name=conference]').append(html);
+				}
+			});
+
+			var revues;
+
+			$.ajax({
+				type: "GET",
+				url:"include/questions/sql.php",
+				data: {file: 'revues'},
+				success:function(result) {
+					revues = result;
+					var html = '';
+					$.each(revues, function(key, value) {
+						html += '<option value="' + value + '">' + value + '</option>'
+					});
+					$('[name=nom_revue]').append(html);
 				}
 			});
 		</script>
@@ -242,6 +348,49 @@
 						}
 					});
 				}
+			});
+		</script>
+		<script type="text/javascript" name="q2c">
+			$('#article_type').change(function() {
+				if ($('#article_type').val() == 'articles_journaux') {
+					$('#articles_conferences').hide();
+					$('#articles_conferences [name]').removeAttr('required');
+					$('#articles_journaux').show();
+					$('#articles_journaux [name]').attr('required', 'true');
+				} else {
+					$('#articles_conferences').show();
+					$('#articles_conferences [name]').attr('required', 'true');
+					$('#articles_journaux').hide();
+					$('#articles_journaux [name]').removeAttr('required');
+				}
+			});
+
+			$('#pg_debut').change(function() {
+				if (Number($('#pg_debut').val()) > Number($('#pg_fin').val())) {
+					$('#pg_fin').val($('#pg_debut').val());
+				}
+			});
+			$('#pg_fin').change(function() {
+				if (Number($('#pg_debut').val()) > Number($('#pg_fin').val())) {
+					$('#pg_debut').val($('#pg_fin').val());
+				}
+			});
+
+			$('#q2c').submit(function(e) {
+				e.preventDefault();
+
+				$.ajax({
+					type: "GET",
+					url:"include/questions/q2c.php",
+					data: $('#q2c').serialize(),
+					success:function(result) {
+						if (result == "success") {
+							$('#q2c + small').html("Article ajouté avec succès à la base de donnée.");
+						} else {
+							$('#q2c + small').html(result);
+						}
+					}
+				});
 			});
 		</script>
 		<script type="text/javascript" name="q2d">
