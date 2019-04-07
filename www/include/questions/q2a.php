@@ -19,7 +19,9 @@ $sql = "SELECT * FROM ".$tablename." WHERE ";
 
 foreach ($desc as $attr) {
 	if (isset($_GET[$attr[0]])) {
-		if (!strpos($attr[1], 'int')) {
+
+		$pos = strpos($attr[1], 'int');
+		if (!$pos && $pos !== 0) {
 			$sql .= $attr[0]." LIKE '%".$_GET[$attr[0]]."%'";
 		} else {
 			$sql .= $attr[0]." = ".$_GET[$attr[0]];
