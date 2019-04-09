@@ -177,7 +177,7 @@ samp {
 
 /* authors */
 
-#authors .container {
+#active_participants .container {
 	width: 25rem;
 }
 
@@ -200,7 +200,7 @@ samp {
 
 /* subjects */
 
-#subjects .container {
+#popular_subjects .container {
 	width: 20rem;
 }
 

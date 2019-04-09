@@ -1,2 +1,0 @@
-SELECT nom
-FROM revues;

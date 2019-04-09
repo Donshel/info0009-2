@@ -42,11 +42,11 @@
 						<p>Formulaire pour ajouter un article dans la base de données.</p>
 					</div>
 					<div>
-						<h5 class="special"><a href="#authors">Participants actifs</a></h5>
+						<h5 class="special"><a href="#active_participants">Participants actifs</a></h5>
 						<p>Les chercheurs qui sont auteurs d'au moins un article à chaque conférence à laquelle ils ont assisté.</p>
 					</div>
 					<div>
-						<h5 class="special"><a href="#subjects">Sujets populaires</a></h5>
+						<h5 class="special"><a href="#popular_subjects">Sujets populaires</a></h5>
 						<p>Les sujets les plus étudiés au cours des 5 conférences les plus populaires depuis 2012.</p>
 					</div>
 				</div>
@@ -56,13 +56,18 @@
 			<div class="container">
 				<div class="sub-title special">Ensemble de publications</div>
 				<div class="input-group input-group-sm mb-3 search_matricule">
-					<select class="custom-select" id="matricule">
+					<select class="custom-select" id="matricule" build="auteurs">
 						<option selected>Choisir...</option>
 					</select>
 				</div>
 				<table id="q2b" class="table table-hover table-sm table-borderless">
 					<thead>
-						<tr class="special"><th scope="column">Titre</th><th scope="column">Date de publication</th><th scope="column">Type</th><th scope="column">Seconds auteurs</th></tr>
+						<tr class="special">
+							<th scope="column">Titre</th>
+							<th scope="column">Date de publication</th>
+							<th scope="column">Type</th>
+							<th scope="column">Seconds auteurs</th>
+						</tr>
 					</thead>
 					<tbody></tbody>
 				</table>
@@ -170,7 +175,7 @@
 				<small></small>
 			</div>
 		</section>
-		<section id="authors">
+		<section id="active_participants">
 			<div class="container">
 				<div class="sub-title special">Participants actifs</div>
 				<table id="q2d" class="table table-hover table-sm table-borderless">
@@ -181,7 +186,7 @@
 				</table>
 			</div>
 		</section>
-		<section id="subjects">
+		<section id="popular_subjects">
 			<div class="container">
 				<div class="sub-title special">Sujets populaires</div>
 				<table id="q2e" class="table table-hover table-sm table-borderless">
@@ -194,8 +199,8 @@
 		</section>
 		<div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog modal-xl">
-					 <div class="modal-content">
-					<p class="mb-2">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter.</p>
+				<div class="modal-content">
+					<p class="mb-2">Pour trouver un ou plusieurs éléments dans la base de donnée, il suffit d'entrer le nom de la table dans laquelle les rechercher et les contraintes que leurs attributs doivent respecter, puis d'appuyer sur la loupe pour lancer la recherche.</p>
 					<p class="mb-2">Il est possible de contraindre à l'égalité pour les attributs numériques (numéro, matricule, année,...) et à la contenance pour les autres.</p>
 					<p class="mb-2">Voici les tables de la base de données et leurs attributs :</p>
 					<div class="table-responsive-xl">
@@ -210,208 +215,11 @@
 				</div>
 			</div>
 		</div>
-		<script type="text/javascript">
-			function isset(e) {
-				return typeof(e) != 'undefined' && e !== null;
-			}
-
-			function build_html(result) {
-				if (!isset(result) || result.length == 0) {
-					return '<tr><td style="text-align:center;">Aucun résultat.</td></tr>';
-				}
-				var html;
-				$.each(result, function(key, value) {
-					html += '<tr>';
-					$.each(value, function(subkey, subvalue) {
-						html += '<td>' + subvalue + '</td>';
-					});
-					html += '</tr>';
-				});
-				return html;
-			}
-
-			var tables;
-			
-			$.ajax({
-				url:"include/scheme.php",
-				success:function(result){
-					tables = result;
-					$.each(tables, function(key, value) {
-						$('#tables > tbody').append('<tr table="' + key +'"><th class="special" scope="row">' + key + '</th></tr>');
-						$.each(value, function(subkey, subvalue) {
-							$('[table='+ key +']').append('<td>' + subvalue + '</td>');
-						});
-					});
-				}
-			});
-
-			var auteurs;
-
-			$.ajax({
-				type: "GET",
-				url:"include/questions/sql.php",
-				data: {file: 'authors'},
-				success:function(result) {
-					auteurs = result;
-					var html = '';
-					$.each(auteurs, function(key, value) {
-						html += '<option value="' + value[0] + '">' + value[0] + ' - ' + value[1] + ' ' + value[2] + '</option>';
-					});
-					$('#matricule').append(html);
-					$('[name=matricule_auteur]').append(html);
-				}
-			});
-
-			var conferences;
-
-			$.ajax({
-				type: "GET",
-				url:"include/questions/sql.php",
-				data: {file: 'conferences'},
-				success:function(result) {
-					conferences = result;
-					var html = '';
-					$.each(conferences, function(key, value) {
-						html += '<option value="' + value + '">' + value[0] + ' (' + value[1] + ')' + '</option>'
-					});
-					$('[name=conference]').append(html);
-				}
-			});
-
-			var revues;
-
-			$.ajax({
-				type: "GET",
-				url:"include/questions/sql.php",
-				data: {file: 'revues'},
-				success:function(result) {
-					revues = result;
-					var html = '';
-					$.each(revues, function(key, value) {
-						html += '<option value="' + value + '">' + value + '</option>'
-					});
-					$('[name=nom_revue]').append(html);
-				}
-			});
-		</script>
-		<script type="text/javascript" name="q2a">
-			$('#search + button').click(function() {
-				if (isset($('#search').val())) {
-					var input = parse($('#search').val());
-					if (isset(tables[input['table']])) {
-						$('#hero').css('padding-top', '15vh');
-						$.ajax({
-							type: "GET",
-							url:"include/questions/q2a.php",
-							data: input,
-							success:function(result) {
-								var html = '<tr class="special">';
-								$.each(result[0], function(key, value) {
-									html += '<th scope="column">' + value[0] + '</th>';
-								});
-								html += '</tr>';
-								$('#q2a > thead').html(html);
-								$('#q2a > tbody').html(build_html(result[1]));
-							}
-						});
-					}
-				}
-			});
-
-			function parse(str) {
-				var constraints = str.split(',');
-				var input = {
-					'table': constraints.shift()
-				};
-
-				var e, i;
-				while (constraints.length > 0) {
-					constraint = constraints.shift();
-					if (constraint.includes('=')) {
-						i = constraint.indexOf('=');
-						input[$.trim(constraint.slice(0, i))] = $.trim(constraint.slice(i + 1));
-					}
-				}
-
-				return input;
-			}
-		</script>
-		<script type="text/javascript" name="q2b">
-			$('#matricule').change(function() {
-				if (isset($('#matricule').val())) {
-					$.ajax({
-						type: "GET",
-						url:"include/questions/q2b.php",
-						data: {matricule: $('#matricule').val()},
-						success:function(result) {
-							$('#q2b > tbody').html(build_html(result));
-						}
-					});
-				}
-			});
-		</script>
-		<script type="text/javascript" name="q2c">
-			$('#article_type').change(function() {
-				if ($('#article_type').val() == 'articles_journaux') {
-					$('#articles_conferences').hide();
-					$('#articles_conferences [name]').removeAttr('required');
-					$('#articles_journaux').show();
-					$('#articles_journaux [name]').attr('required', 'true');
-				} else {
-					$('#articles_conferences').show();
-					$('#articles_conferences [name]').attr('required', 'true');
-					$('#articles_journaux').hide();
-					$('#articles_journaux [name]').removeAttr('required');
-				}
-			});
-
-			$('#pg_debut').change(function() {
-				if (Number($('#pg_debut').val()) > Number($('#pg_fin').val())) {
-					$('#pg_fin').val($('#pg_debut').val());
-				}
-			});
-			$('#pg_fin').change(function() {
-				if (Number($('#pg_debut').val()) > Number($('#pg_fin').val())) {
-					$('#pg_debut').val($('#pg_fin').val());
-				}
-			});
-
-			$('#q2c').submit(function(e) {
-				e.preventDefault();
-
-				$.ajax({
-					type: "GET",
-					url:"include/questions/q2c.php",
-					data: $('#q2c').serialize(),
-					success:function(result) {
-						if (result == "success") {
-							$('#q2c + small').html("Article ajouté avec succès à la base de donnée.");
-						} else {
-							$('#q2c + small').html(result);
-						}
-					}
-				});
-			});
-		</script>
-		<script type="text/javascript" name="q2d">
-			$.ajax({
-				type: "GET",
-				url:"include/questions/sql.php",
-				data: {file: 'questions/q2d'},
-				success:function(result) {
-					$('#q2d > tbody').html(build_html(result));
-				}
-			});
-		</script>
-		<script type="text/javascript" name="q2e">
-			$.ajax({
-				type: "GET",
-				url:"include/questions/sql.php",
-				data: {file: 'questions/q2e'},
-				success:function(result) {
-					$('#q2e > tbody').html(build_html(result));
-				}
-			});
-		</script>
+		<script src="resources/js/build.js"></script>
+		<script src="resources/js/questions/q2a.js"></script>
+		<script src="resources/js/questions/q2b.js"></script>
+		<script src="resources/js/questions/q2c.js"></script>
+		<script src="resources/js/questions/q2d.js"></script>
+		<script src="resources/js/questions/q2e.js"></script>
 	</body>
 </html>
