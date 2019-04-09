@@ -106,9 +106,24 @@
 							<div class="input-group-prepend">
 								<label class="input-group-text">Auteur</label>
 							</div>
-							<select name="matricule_auteur" class="form-control" required>
+							<select name="matricule_auteur" class="form-control" build="auteurs" required>
 								<option selected>Choisir...</option>
 							</select>
+						</div>
+					</div>
+					<hr>
+					<div class="form-group">
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Sujets</label>
+							</div>
+							<input type="text" name="sujets_articles" class="form-control" placeholder="Quantum computing, Deep learning, Star Wars" title="Sujets séparés par des virgules.">
+						</div>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Seconds auteurs</label>
+							</div>
+							<input type="text" name="seconds_auteurs" class="form-control" placeholder="31, 41, 5" pattern="[0-9, ]*" title="Matricules séparés par des virgules.">
 						</div>
 					</div>
 					<hr>
@@ -122,21 +137,13 @@
 						</select>
 					</div>
 					<div class="form-group" id="articles_journaux">
-						<div class="form-row mb-3">
-							<div class="input-group col-md-7">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Revue</label>
-								</div>
-								<select name="nom_revue" class="form-control" required>
-									<option selected>Choisir...</option>
-								</select>
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<label class="input-group-text">Journal</label>
 							</div>
-							<div class="input-group col-md-5">
-								<div class="input-group-prepend">
-									<label class="input-group-text">Journal</label>
-								</div>
-								<input type="number" name="n_journal" class="form-control" min="1" max="32766" placeholder="42" required>
-							</div>
+							<select name="journal" class="form-control" build="journaux" required>
+								<option selected>Choisir...</option>
+							</select>
 						</div>
 						<div class="form-row mb-3">
 							<div class="input-group col-md-6">
@@ -158,7 +165,7 @@
 							<div class="input-group-prepend">
 								<label class="input-group-text">Conférence</label>
 							</div>
-							<select name="conference" class="form-control">
+							<select name="conference" class="form-control" build="conferences">
 								<option selected>Choisir...</option>
 							</select>
 						</div>
