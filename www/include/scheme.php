@@ -4,15 +4,15 @@ header('Content-Type: application/json');
 
 include('connect.php');
 
-$response = $connect->query('SHOW TABLES;');
+$response = $connect->query("SHOW TABLES;");
 $list = $response->fetchAll(PDO::FETCH_NUM);
 
 $tables = array();
 
-foreach ($list as $key => $value) {
+foreach ($list as $value) {
 	$tablename = $value[0];
 
-	$response = $connect->query('DESC '.$tablename.';');
+	$response = $connect->query("DESC $tablename;");
 	$table = $response->fetchAll(PDO::FETCH_NUM);
 
 	$attrs = array();

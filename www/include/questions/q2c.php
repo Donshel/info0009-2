@@ -39,7 +39,7 @@ if ($type == 'articles_conferences') {
 	}
 }
 
-$response = $connect->query('DESC articles;');
+$response = $connect->query("DESC articles;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
 foreach ($desc as $attr) {

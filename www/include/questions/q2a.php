@@ -12,10 +12,10 @@ if (isset($_GET['table'])) {
 	exit;
 }
 
-$response = $connect->query('DESC '.$tablename.';');
+$response = $connect->query("DESC $tablename;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
-$sql = "SELECT * FROM ".$tablename." WHERE ";
+$sql = "SELECT * FROM $tablename WHERE ";
 
 foreach ($desc as $attr) {
 	if (isset($_GET[$attr[0]])) {
