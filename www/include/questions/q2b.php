@@ -36,12 +36,22 @@ $table = $response->fetchAll(PDO::FETCH_NUM);
 foreach ($table as &$value) {
 	$url = $value[3];
 
-	$sql = "SELECT matricule FROM seconds_auteurs WHERE url = '$url';";
+	$sql =
+"
+SELECT CONCAT(' ', LEFT(prenom, 1), '.', nom)
+FROM auteurs
+NATURAL JOIN
+(
+	SELECT matricule
+	FROM seconds_auteurs
+	WHERE url = '$url'
+) AS T1;
+";
 
 	$response = $connect->query($sql);
-	$matricules = $response->fetchAll(PDO::FETCH_NUM);
+	$seconds_auteurs = $response->fetchAll(PDO::FETCH_NUM);
 
-	$value[3] = $matricules;
+	$value[3] = $seconds_auteurs;
 }
 
 echo json_encode($table);
