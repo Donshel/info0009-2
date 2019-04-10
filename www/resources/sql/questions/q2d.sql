@@ -1,33 +1,20 @@
 SELECT matricule, nom, prenom
-FROM
+FROM auteurs
+NATURAL JOIN
 (
-	SELECT matricule_auteur, matricule_participant AS matricule
+	SELECT *
 	FROM
 	(
-		SELECT DISTINCT T3.matricule AS matricule_auteur, T4.matricule AS matricule_participant
-		FROM
+		SELECT DISTINCT matricule, matricule_auteur
+		FROM participations AS T1
+		LEFT JOIN
 		(
-			SELECT * 
-			FROM
-			(
-				SELECT url, nom_conference, annee_conference
-				FROM articles_conferences
-			) AS T1
-			NATURAL JOIN
-			(
-				SELECT url, matricule_auteur AS matricule
-				FROM articles
-			) AS T2
-		) AS T3
-		RIGHT JOIN
-		(
-			SELECT nom_conference, annee_conference, matricule
-			FROM participations
-		) AS T4
-		ON T3.matricule = T4.matricule AND T3.nom_conference = T4.nom_conference AND T3.annee_conference = T4.annee_conference
-	) AS T5
-	GROUP BY matricule_participant
+			SELECT nom_conference, annee_conference, matricule_auteur
+			FROM articles_conferences
+			NATURAL JOIN articles
+		) AS T2
+		ON T1.matricule = T2.matricule_auteur AND T1.nom_conference = T2.nom_conference AND T1.annee_conference = T2.annee_conference
+	) AS T3
+	GROUP BY matricule
 	HAVING COUNT(*) = 1 AND matricule_auteur IS NOT NULL
-) AS T6
-NATURAL JOIN
-auteurs;
+) AS T4;
