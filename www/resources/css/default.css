@@ -85,6 +85,12 @@ samp {
 	word-break: break-all;
 }
 
+div.search + div {
+	text-align: center;
+	margin: 0 auto;
+	width: 50%;
+}
+
 /* search */
 
 .search {

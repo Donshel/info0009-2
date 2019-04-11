@@ -13,10 +13,13 @@ $('#search + button').click(function() {
 						html += '<th scope="column">' + value[0] + '</th>';
 					});
 					html += '</tr>';
+					$('.search + div').html('');
 					$('#q2a > thead').html(html);
 					$('#q2a > tbody').html(build_html(result[1]));
 				}
 			});
+		} else {
+			$('.search + div').html("Nom de la table erroné.");
 		}
 	}
 });
