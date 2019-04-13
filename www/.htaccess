@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Accès au projet INFO0009-2"
+AuthUserFile /export/users/s161024/WWW/.htpasswd
+Require valid-user
