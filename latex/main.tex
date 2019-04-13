@@ -1,0 +1,195 @@
+\documentclass[a4paper, 12pt]{article}
+
+\def\languages{english, french}
+
+%%%%%%%%%%%%%%%%%%% Libraries
+
+\input{./include/libraries/default.tex}
+\input{./include/libraries/mathematics.tex}
+\input{./include/libraries/units.tex}
+\input{./include/libraries/informatics.tex}
+
+%%%%%%%%%%%%%%%%%%% Titlepage
+
+\def\logopath{./resources/pdf/logo.pdf}
+\def\toptitle{Université de Liège}
+\title{Seconde partie du projet}
+\def\subtitle{\vspace{-0.5em}INFO0009-2 -- Base de données}
+%\def\authorhead{}
+\author{Simon \textsc{Bernard} (s161519)\\Ivan \textsc{Klapka} (s165345)\\François \textsc{Rozet} (s161024)\\}
+%\def\rightauthorhead{}
+%\def\rightauthor{}
+\def\context{3\up{ème} année de Bachelier Ingénieur civil}
+\date{Année académique 2018-2019}
+
+%%%%%%%%%%%%%%%%%%%
+
+\lstdefinestyle{sql}{
+    language=sql,
+    style=default,
+    %%%%%
+    commentstyle=\color[HTML]{228B22},
+    keywordstyle=\color[HTML]{0000FF},
+    stringstyle=\color[HTML]{A020F0},
+    emphstyle=\color[HTML]{0000FF},
+    %%%%%
+    emph={LOCK, UNLOCK, TABLES}
+}
+
+\lstdefinestyle{php}{
+    language=php,
+    style=default,
+    %%%%%
+    commentstyle=\color[HTML]{228B22},
+    keywordstyle=\color[HTML]{0000FF},
+    stringstyle=\color[HTML]{A020F0},
+    emphstyle=\color[HTML]{0000FF},
+    %%%%%
+    emph={as, query, fetchAll, json_encode}
+}
+
+\NtbFstyle{sql}
+\NtbFstyle{php}
+\Nstyle{php}
+
+%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+	\input{./include/titlepages/default.tex}
+	\section{Arti-clever}
+	\subsection{Emplacement}
+	Le site web \emph{Arti-clever} est actuellement hébergé à l'adresse suivante :
+	\begin{center}
+	    \href{http://www.student.montefiore.ulg.ac.be/~s161024/}{http://www.student.montefiore.ulg.ac.be/~s161024/}
+	\end{center}
+	\subsection{Authentification}
+	Pour accéder à la page d'accueil du site, et par la même occasion tous ses sous-dossiers, il est nécessaire de remplir une requête d'authentification\footnote{Les identifiants sont ceux de la base de données.} \texttt{http}. Ce sont les fichiers \texttt{.htaccess} et \text{.htpasswd} présents à la racine du site qui permettent ce type de protection. Il est à noter que l'emplacement \emph{absolu} du fichier \text{.htpasswd} est renseigné dans le \texttt{.htaccess}, ce qui signifie que pour déplacer le site, il est nécessaire de modifier ce fichier.
+	\subsection{Architecture}
+	Lorsque l'authentification est réussie, l'utilisateur est dirigé vers la page d'accueil du site; qui est en réalité sa seule page. Elle est séparée en plusieurs sections répondant chacune à une des sous-questions. \par
+	Cette page d'accueil est un fichier \texttt{HTML} dynamisée à l'aide de \texttt{JavaScript}. Notamment, tous les accès à la base de données sont réalisés par des requêtes \texttt{AJAX} (cf. répertoire \texttt{resources/js/}) vers des scripts \texttt{PHP} et, en cas de succès, les résultats sont ajoutés dynamiquement au contenu de la page. Cela à pour avantage non négligeable de ne pas devoir recharger la page à chaque requête. \par
+	Les scripts \texttt{PHP} contenus dans le répertoire \texttt{include/}, exécutent des requêtes \texttt{SQL}, pour la plupart, dépendantes des arguments fournis par méthode \texttt{get}\footnote{Nous avons préféré la méthode \texttt{get} à la méthode \texttt{post} car la première permet d'introduire des arguments dans l'URL manuellement.}. Lorsque les requêtes ne nécessitent pas d'arguments, elles sont directement rédigées dans des scripts \texttt{.sql} contenus dans le répertoire \texttt{resources/sql/}. \par
+	Le site utilise la bibliothèque de styles \href{https://getbootstrap.com/}{Bootstrap}.
+	\subsection{Initialisation}
+    Initialiser ou réinitialiser la base de données se fait en trois étapes représentées par les trois scripts \texttt{create.sql}, \texttt{delete.sql} et \texttt{load.sql} dans le répertoire \texttt{resources/sql/ initialization/}. \par
+    Le premier créée les tables si elles n'existent pas, le deuxième supprime les éventuelles données de toutes les tables et le troisième charge les données depuis les \texttt{.csv} du répertoire \texttt{resources/csv/} dans les tables correspondantes. \par
+    Bien qu'il soit parfaitement envisageable de copier-coller manuellement ces scripts dans un terminal, nous avons implémenté le script \href{http://www.student.montefiore.ulg.ac.be/~s161024/include/initialize.php}{\texttt{include/initialize.php}} pour le faire à notre place. Il suffit donc de s'y rendre, pour initialiser la base de données.
+    \section{Requêtes}
+    Mis à part pour la question \ref{sec:nouvel-article}, les requêtes ne font que lire dans la base de données. Il n'est donc pas nécessaire de vérifier les contraintes d'intégrité.
+    \renewcommand\thesubsection{\thesection.\alph{subsection}}
+    \subsection{Recherche par contraintes}
+    La requête est exécutée par le script \texttt{include/questions/q2a.php}.
+    \lstinputlisting[style=NtbFphp, caption=\texttt{q2a.php} -- Construction de la requête \texttt{SQL}, firstnumber=18, firstline=18, lastline=33]{resources/php/q2a.php}
+    Ce dernier reçoit, par l'intermidiaire du script \texttt{resources/js/questions/q2a.js}, un tableau (\texttt{\$\_GET}) dont les couples \emph{clé-valeur} définissent les contraintes sur la recherche. \par
+    La valeur associée à la clé \texttt{table} est le nom de la table dans laquelle sont recherchés les éléments et les autres clés sont les noms des attributs contraints. Il est à noter que seuls sont considérés les couples dont la clé correspond à un attribut de la table. \par
+    Si un attribut est un nombre, \cad{} si son \emph{type} dans la description (\texttt{DESC tablename;}) de la table contient la chaîne \texttt{int}, nous utilisons une contrainte d'égalité (\texttt{= value}) et, le cas échéant, une contrainte de contenance (\texttt{LIKE '\%value\%'}). \par
+    En finalité, nous obtenons une requête du type 
+    \begin{lstlisting}[style=sql, gobble=8]
+        SELECT * FROM $tablename WHERE $attr0 = $value0 AND $attr1 LIKE '%$value1%' AND ... AND 1;
+    \end{lstlisting}
+    Le \texttt{1} terminal n'est normalement pas nécessaire, mais il a été ajouté pour neutraliser le dernier \texttt{AND}.
+    \subsection{Ensemble de publications}
+    La requête est exécutée par le script \texttt{include/questions/q2b.php}. Il est décomposé en deux parties.
+    \subsubsection{Publications}
+    La première partie permet d'obtenir l'ensemble de publications de l'auteur dont le matricule est \texttt{\$matricule} (initialement \texttt{\$\_GET['matricule']}).
+    \lstinputlisting[style=NtbFsql, caption=\texttt{q2b.php} - Première requête \texttt{SQL}, firstnumber=16, firstline=16, lastline=30]{resources/php/q2b.php}
+    La table \texttt{T1} est l'ensemble des articles dont il est auteur et la table \texttt{T2} lie à chaque article de la base de données un type (\texttt{journal} ou \texttt{conference}). Dès lors, le \texttt{NATURAL JOIN} entre ces deux tables est ce que nous souhaitons.
+    \subsubsection{Seconds auteurs}
+    Ensuite, pour chaque article trouvé, on rechercher ses seconds auteurs à partir de son URL. \newpage
+    \lstinputlisting[style=NtbFsql, caption=\texttt{q2b.php} -- Seconde(s) requête(s) \texttt{SQL}, firstnumber=41, firstline=41, lastline=48]{resources/php/q2b.php}
+    La table \texttt{T1} est donc l'ensemble des matricules des seconds auteurs de l'article dont l'URL est \texttt{\$url}. Son \texttt{NATURAL JOIN} avec la table \texttt{articles} nous permet d'obtenir leurs nom et prénom que nous concaténons en un seul champ pour faciliter l'affichage. \par
+    Ensuite, le champ contenant l'URL dans la table précédente est remplacé par cette nouvelle table et ce pour chaque article.
+    \subsection{Nouvel article}\label{sec:nouvel-article}
+    La requête est exécutée par le script \texttt{include/questions/q2c.php}. Elle est composée de deux parties.
+    \subsubsection{Avant verrouillage}
+    Avant de verrouiller les tables pour écriture, certaines contraintes sont vérifiées (cf. lignes $60$ à $110$). \par
+    Il est vérifié que
+    \begin{itemize}[leftmargin=*]
+        \item L'auteur existe. \Cad{} vérifier si le résultat de
+        \begin{lstlisting}[style=sql, gobble=12]
+            SELECT matricule FROM auteurs WHERE matricule = '$matricule_auteur';
+        \end{lstlisting}
+        n'est pas vide.
+        \item La conférence existe. \Cad{} vérifier si le résultat de
+        \begin{lstlisting}[style=sql, gobble=12]
+            SELECT * FROM conferences WHERE nom = '$nom_conference' AND annee = '$annee_conference';
+        \end{lstlisting}
+        n'est pas vide.
+        \item La journal existe. \Cad{} vérifier si le résultat de
+        \begin{lstlisting}[style=sql, gobble=12]
+            SELECT * FROM articles_journaux WHERE nom_revue = '$nom_revue' AND n_journal = '$n_journal';
+        \end{lstlisting}
+        n'est pas vide. \par
+        Pour ne pas multiplier les appels à la base de données, cette requête est couplée avec une autre pour obtenir l'année de publication du journal.
+        \begin{lstlisting}[style=sql, gobble=12]
+            SELECT date_publication FROM articles NATURAL JOIN $type WHERE nom_revue = '$nom_revue' AND n_journal = '$n_journal' LIMIT 1;
+        \end{lstlisting}
+        \item L'année de la conférence ou celle du journal (cf. au dessus) est l'année du nouvel article.
+        \item La page de fin d'un article de journal est au moins égale à la page de début.\footnote{Il faudrait normalement vérifier que deux articles dans un même journal ne se chevauchent pas. Néanmoins, ce n'est pas une des contraintes de l'énoncé, nous ne l'avons donc pas implémenté.}
+    \end{itemize}
+    \subsubsection{Avec verrouillage}
+    Lorsque la première partie est un succès, nous verrouillons les tables nécessaires.
+    \lstinputlisting[style=NtbFphp, caption=\texttt{q2c.php} - Verrouillage des tables, firstnumber=116, firstline=116, lastline=125]{resources/php/q2c.php}
+    Dans le cas d'un article de journal sans sujets mais avec des seconds auteurs, nous avons
+    \begin{lstlisting}[style=sql, gobble=8]
+        LOCK TABLES articles WRITE, articles_journaux WRITE, seconds_auteurs WRITE, auteurs READ;
+    \end{lstlisting}
+    Ensuite, nous vérifions si l'article n'existe pas. \Cad{} si
+    \begin{lstlisting}[style=sql, gobble=8]
+        SELECT * FROM articles WHERE url = '$url' OR doi = '$doi';
+    \end{lstlisting}
+    est bien vide. Cette vérification \emph{doit} être effectuée après le verrouillage pour garentir l'intégrité. \par
+    Finalement, les informations liées à l'article peuvent être ajoutées aux tables. Sont choisies les requêtes nécessaires parmi les suivantes :
+    \begin{description}[leftmargin=*]
+        \item[articles]\mbox{}
+        \begin{lstlisting}[style=sql, gobble=12]
+            INSERT INTO articles (url, doi, titre, date_publication, matricule_auteur) VALUES ('$url', $doi, '$titre', '$date_publication', $matricule_auteur);
+        \end{lstlisting}
+        \item[articles\_conferences]\mbox{}
+        \begin{lstlisting}[style=sql, gobble=12]
+            INSERT INTO articles_conferences (url, presentation, nom_conference, annee_conference) VALUES ('$url', '$presentation', '$nom_conference', $annee_conference);
+        \end{lstlisting}
+        \item[articles\_journaux]\mbox{}
+        \begin{lstlisting}[style=sql, gobble=12]
+            INSERT INTO articles_journaux (url, pg_debut, pg_fin, nom_revue, n_journal) VALUES ('$url', $pg_debut, $pg_fin, '$nom_revue', $n_journal);
+        \end{lstlisting}
+        \item[sujets\_articles]\mbox{}
+        \begin{lstlisting}[style=sql, gobble=12]
+            INSERT INTO sujets_artilces (url, sujet) VALUES ('$url', '$sujet0'), ('$url', '$sujet1'), ...;
+        \end{lstlisting}
+        \item[seconds\_auteurs]\mbox{}
+        \begin{lstlisting}[style=sql, gobble=12]
+            INSERT INTO seconds_auteurs (url, matricule) VALUES ('$url', $matricule0), ('$url', $matricule1), ...;
+        \end{lstlisting}
+        Où les \texttt{\$matriculei} sont différents du matricule de l'auteur principal et sont ceux d'auteurs existants dans la base de données. \Cad{} que le résultat de
+        \begin{lstlisting}[style=sql, gobble=12]
+            SELECT matricule FROM auteurs WHERE matricule = $matriculei;
+        \end{lstlisting}
+        n'est pas vide pour tout \texttt{i}.
+    \end{description}
+    Le succès de chacune de ces requêtes est vérifié de façon à annuler l'opération en cas d'erreur :
+    \begin{lstlisting}[style=sql, gobble=8]
+        ROLLBACK;
+    \end{lstlisting}
+    S'il n'y en a eu aucune, nous confirmons les modifications :
+    \begin{lstlisting}[style=sql, gobble=8]
+        COMMIT;
+    \end{lstlisting}
+    Finalement, nous déverrouillons les tables :
+    \begin{lstlisting}[style=sql, gobble=8]
+        UNLOCK TABLES;
+    \end{lstlisting}
+    \newpage
+    \subsection{Participants actifs}
+    Pour exécuter la requête, le script \texttt{resources/sql/questions/q2d.sql} est appelé.
+    \lstinputlisting[style=NtbFsql, caption=\texttt{q2d.sql}]{resources/sql/q2d.sql}
+    En premier lieu, nous associons (\texttt{LEFT JOIN}) à chaque ligne de la table \texttt{participations} (\texttt{T1}) les articles de l'auteur participant dans la conférence. Il est possible qu'une ligne de \texttt{T1} n'ait aucun ou plusieurs articles associés. \par
+    Dans cette table, nous intéresse les matricules des participants qui ne sont \emph{pas} associés à des \texttt{NULL}. Nous réduisons donc la table aux deux colonnes de matricule et ne sélectionnons que des lignes distinctes (\texttt{DISTINCT}). \par
+    Dans cette nouvelle table \texttt{T3}, tous les \texttt{matricule} figurant dans plusieurs lignes sont obligatoirement associés à une valeur \texttt{NULL}. La table \texttt{T4} groupe donc par \texttt{matricule} tout en supprimant les groupes de plus d'un élément et ceux dont la valeur associée est \texttt{NULL}. \par
+    Finalement, les nom et prénom des auteurs restants sont récupérés de la table \texttt{articles}.
+    \newpage
+    \subsection{Sujets populaires}
+    Pour exécuter la requête, le script \texttt{resources/sql/questions/q2e.sql} est appelé.
+    \lstinputlisting[style=NtbFsql, caption=\texttt{q2e.sql}]{resources/sql/q2e.sql}
+    Premièrement (\texttt{T1}), nous recherchons les cinq conférences les plus populaires depuis $2012$, \cad{} celles ayant eu le plus de participations. Il est à noter que si plusieurs conférences ont le même nombre de participants, le tri (\texttt{ORDER}) pourrait différer à chaque appel ainsi que les cinq premières conférences\footnote{C'est le cas de notre base de données.}. \par
+    Ensuite, nous récupérons les sujets de chaque article de ces conférences et les trions par nombre d'occurrences.
+\end{document}
