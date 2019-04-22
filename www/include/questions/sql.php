@@ -17,7 +17,7 @@ include('../connect.php');
 
 $sql = file_get_contents($file);
 
-$response = $connect->query($sql);
+$response = $pdo->query($sql);
 $table = $response->fetchAll(PDO::FETCH_NUM);
 
 echo json_encode($table);

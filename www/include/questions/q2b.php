@@ -30,7 +30,7 @@ FROM
 ORDER BY date_publication DESC;
 ";
 
-$response = $connect->query($sql);
+$response = $pdo->query($sql);
 $table = $response->fetchAll(PDO::FETCH_NUM);
 
 foreach ($table as &$value) {
@@ -48,7 +48,7 @@ NATURAL JOIN
 ) AS T1;
 ";
 
-	$response = $connect->query($sql);
+	$response = $pdo->query($sql);
 	$seconds_auteurs = $response->fetchAll(PDO::FETCH_NUM);
 
 	$value[3] = $seconds_auteurs;

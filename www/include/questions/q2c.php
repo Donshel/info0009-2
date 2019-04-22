@@ -39,7 +39,7 @@ if ($type == 'articles_conferences') {
 	}
 }
 
-$response = $connect->query("DESC articles;");
+$response = $pdo->query("DESC articles;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
 foreach ($desc as $attr) {
@@ -49,7 +49,7 @@ foreach ($desc as $attr) {
 	}
 }
 
-$response = $connect->query("DESC $type;");
+$response = $pdo->query("DESC $type;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
 foreach ($desc as $attr) {
@@ -75,7 +75,7 @@ if ($type == 'articles_conferences') {
 
 $sql = "SELECT matricule FROM auteurs WHERE matricule = '$matricule_auteur';";
 
-$response = $connect->query($sql);
+$response = $pdo->query($sql);
 $table = $response->fetchAll(PDO::FETCH_NUM);
 
 if (sizeof($table) == 0) {
@@ -86,7 +86,7 @@ if (sizeof($table) == 0) {
 if ($type == 'articles_conferences') {
 	$sql = "SELECT * FROM conferences WHERE nom = '$nom_conference' AND annee = '$annee_conference';";
 
-	$response = $connect->query($sql);
+	$response = $pdo->query($sql);
 	$table = $response->fetchAll(PDO::FETCH_NUM);
 
 	if (sizeof($table) == 0) {
@@ -96,7 +96,7 @@ if ($type == 'articles_conferences') {
 } else {
 	$sql = "SELECT date_publication FROM articles NATURAL JOIN $type WHERE nom_revue = '$nom_revue' AND n_journal = '$n_journal' LIMIT 1;";
 
-	$response = $connect->query($sql);
+	$response = $pdo->query($sql);
 	$table = $response->fetchAll(PDO::FETCH_NUM);
 
 	if (sizeof($table) == 0) {
@@ -112,6 +112,9 @@ if ($type == 'articles_conferences') {
 	}
 }
 
+// Transaction
+$pdo->beginTransaction();
+
 // LOCK
 $sql = "LOCK TABLES articles WRITE, $type WRITE";
 
@@ -124,29 +127,32 @@ if (isset($seconds_auteurs)) {
 
 $sql .= ";";
 
-if (!$connect->query($sql)) {
+if (!$pdo->query($sql)) {
 	echo "Erreur pendant le verrouillement des tables.";
+	$pdo->rollback();
 	exit;
 }
 
 // Article existence
 $sql = "SELECT * FROM articles WHERE url = '$url' OR doi = '$doi';";
 
-$response = $connect->query($sql);
+$response = $pdo->query($sql);
 $table = $response->fetchAll(PDO::FETCH_NUM);
 
 if (sizeof($table) != 0) {
 	echo "Article déjà existant.";
-	$connect->query("ROLLBACK; UNLOCK TABLES;");
+	$pdo->rollback();
+	$pdo->query("UNLOCK TABLES;");
 	exit;
 }
 
 // INSERT
 $sql = "INSERT INTO articles (url, doi, titre, date_publication, matricule_auteur) VALUES ('$url', $doi, '$titre', '$date_publication', $matricule_auteur);";
 
-if (!$connect->query($sql)) {
+if (!$pdo->query($sql)) {
 	echo "Erreur pendant l'insertion dans la table 'articles'.";
-	$connect->query("ROLLBACK; UNLOCK TABLES;");
+	$pdo->rollback();
+	$pdo->query("UNLOCK TABLES;");
 	exit;
 }
 
@@ -156,9 +162,10 @@ if ($type == 'articles_conferences') {
 	$sql = "INSERT INTO $type (url, pg_debut, pg_fin, nom_revue, n_journal) VALUES ('$url', $pg_debut, $pg_fin, '$nom_revue', $n_journal);";
 }
 
-if (!$connect->query($sql)) {
+if (!$pdo->query($sql)) {
 	echo "Erreur pendant l'insertion dans la table '$type'.";
-	$connect->query("ROLLBACK; UNLOCK TABLES;");
+	$pdo->rollback();
+	$pdo->query("UNLOCK TABLES;");
 	exit;
 }
 
@@ -173,9 +180,10 @@ if (isset($sujets_articles)) {
 
 	$sql = substr($sql, 0, -1).";";
 
-	if (!$connect->query($sql)) {
+	if (!$pdo->query($sql)) {
 		echo "Error pendant l'insertion dans la table 'sujets_articles'.";
-		$connect->query("ROLLBACK; UNLOCK TABLES;");
+		$pdo->rollback();
+		$pdo->query("UNLOCK TABLES;");
 		exit;
 	}
 }
@@ -190,7 +198,7 @@ if (isset($seconds_auteurs)) {
 		if ($matricule_auteur != $matricule) {
 			$sub_sql = "SELECT matricule FROM auteurs WHERE matricule = $matricule;";
 
-			$response = $connect->query($sub_sql);
+			$response = $pdo->query($sub_sql);
 			$table = $response->fetchAll(PDO::FETCH_NUM);
 
 			if (sizeof($table) != 0) {
@@ -201,16 +209,17 @@ if (isset($seconds_auteurs)) {
 
 	$sql = substr($sql, 0, -1).";";
 
-	if (!$connect->query($sql)) {
+	if (!$pdo->query($sql)) {
 		echo "Erreur pendant l'insertion dans la table 'seconds_auteurs'.";
-		$connect->query("ROLLBACK; UNLOCK TABLES;");
+		$pdo->rollback();
+		$pdo->query("UNLOCK TABLES;");
 		exit;
 	}
 }
 
 // COMMIT
-
-$connect->query("COMMIT; UNLOCK TABLES;");
+$pdo->commit();
+$pdo->query("UNLOCK TABLES;");
 
 echo "success";
 
