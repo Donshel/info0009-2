@@ -12,7 +12,7 @@ if (isset($_GET['table'])) {
 	exit;
 }
 
-$response = $connect->query("DESC $tablename;");
+$response = $pdo->query("DESC $tablename;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
 $sql = "SELECT * FROM $tablename WHERE ";
@@ -22,7 +22,7 @@ foreach ($desc as $attr) {
 
 		$pos = strpos($attr[1], 'int');
 		if (!$pos && $pos !== 0) {
-			$sql .= $attr[0]." LIKE '%".$_GET[$attr[0]]."%'";
+			$sql .= $attr[0]." COLLATE UTF8_GENERAL_CI LIKE '%".$_GET[$attr[0]]."%'";
 		} else {
 			$sql .= $attr[0]." = ".$_GET[$attr[0]];
 		}
@@ -32,7 +32,7 @@ foreach ($desc as $attr) {
 
 $sql .= "1;";
 
-$response = $connect->query($sql);
+$response = $pdo->query($sql);
 $table = $response->fetchAll(PDO::FETCH_NUM);
 
 echo json_encode(array($desc, $table));
