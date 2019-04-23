@@ -62,7 +62,7 @@ foreach ($desc as $attr) {
 // Compatibilité et existence
 
 if ($type == 'articles_conferences') {
-	if (substr($date_publication, 0, 4) != $annee_conference) {
+	if (date('Y', strtotime($date_publication)) != $annee_conference) {
 		echo "Incompatibilité : La date de publication n'est pas dans l'année de la conférence ($annee_conference).";
 		exit;
 	}
@@ -106,7 +106,7 @@ if ($type == 'articles_conferences') {
 
 	$annee_journal = substr($table[0][0], 0, 4);
 
-	if (substr($date_publication, 0, 4) != $annee_journal) {
+	if (date('Y', strtotime($date_publication)) != $annee_journal) {
 		echo "Incompatibilité : La date de publication n'est pas de la même année que les autres publications du journal ($annee_journal).";
 		exit;
 	}
