@@ -183,14 +183,14 @@
     \subsection{Participants actifs}
     Pour exécuter la requête, le script \texttt{resources/sql/questions/q2d.sql} est appelé.
     \lstinputlisting[style=NtbFsql, caption=\texttt{q2d.sql}]{resources/sql/q2d.sql}
-    En premier lieu, nous associons (\texttt{LEFT JOIN}) à chaque ligne de la table \texttt{participations} (\texttt{T1}) les articles de l'auteur participant dans la conférence. Il est possible qu'une ligne de \texttt{T1} n'ait aucun ou plusieurs articles associés. \par
+    En premier lieu, nous associons (\texttt{LEFT JOIN}) à chaque ligne de la table \texttt{participations} (\texttt{T2}) les articles de l'auteur participant dans la conférence. Il est possible qu'une ligne de \texttt{T2} n'ait aucun ou plusieurs articles associés. \par
     Dans cette table, nous intéresse les matricules des participants qui ne sont \emph{pas} associés à des \texttt{NULL}. Nous réduisons donc la table aux deux colonnes de matricule et ne sélectionnons que des lignes distinctes (\texttt{DISTINCT}). \par
-    Dans cette nouvelle table \texttt{T3}, tous les \texttt{matricule} figurant dans plusieurs lignes sont obligatoirement associés à une valeur \texttt{NULL}. La table \texttt{T4} groupe donc par \texttt{matricule} tout en supprimant les groupes de plus d'un élément et ceux dont la valeur associée est \texttt{NULL}. \par
+    Dans cette nouvelle table \texttt{T6}, tous les \texttt{matricule} figurant dans plusieurs lignes sont obligatoirement associés à une valeur \texttt{NULL}. La table \texttt{T7} groupe donc par \texttt{matricule} tout en supprimant les groupes de plus d'un élément et ceux dont la valeur associée est \texttt{NULL}. \par
     Finalement, les nom et prénom des auteurs restants sont récupérés de la table \texttt{articles}.
     \newpage
     \subsection{Sujets populaires}
     Pour exécuter la requête, le script \texttt{resources/sql/questions/q2e.sql} est appelé.
     \lstinputlisting[style=NtbFsql, caption=\texttt{q2e.sql}]{resources/sql/q2e.sql}
-    Premièrement (\texttt{T1}), nous recherchons les cinq conférences les plus populaires depuis $2012$, \cad{} celles ayant eu le plus de participations. Il est à noter que si plusieurs conférences ont le même nombre de participants, le tri (\texttt{ORDER}) pourrait différer à chaque appel ainsi que les cinq premières conférences\footnote{C'est le cas de notre base de données.}. \par
+    Premièrement (\texttt{T2}), nous recherchons les cinq conférences les plus populaires depuis $2012$, \cad{} celles ayant eu le plus de participations. Il est à noter que si plusieurs conférences ont le même nombre de participants, le tri (\texttt{ORDER}) pourrait différer à chaque appel ainsi que les cinq premières conférences\footnote{C'est le cas de notre base de données.}. \par
     Ensuite, nous récupérons les sujets de chaque article de ces conférences et les trions par nombre d'occurrences.
 \end{document}
