@@ -128,10 +128,10 @@
     \end{itemize}
     \subsubsection{Transaction}
     Si la première partie est un succès, nous déclarons le début de la transaction et nous verrouillons les tables nécessaires.
-    \lstinputlisting[style=NtbFphp, caption=\texttt{q2c.php} - Transaction et verrouillage des tables, firstnumber=116, firstline=116, lastline=128]{resources/php/q2c.php}
-    Dans le cas d'un article de journal sans sujets mais avec des seconds auteurs, nous avons
+    \lstinputlisting[style=NtbFphp, caption=\texttt{q2c.php} - Transaction et verrouillage des tables, firstnumber=120, firstline=120, lastline=130]{resources/php/q2c.php}
+    Dans le cas d'un article de journal avec des seconds auteurs, nous avons
     \begin{lstlisting}[style=sql, gobble=8]
-        LOCK TABLES articles WRITE, articles_journaux WRITE, seconds_auteurs WRITE, auteurs READ;
+        LOCK TABLES articles WRITE, articles_journaux WRITE, sujets_articles WRITE, seconds_auteurs WRITE, auteurs READ;
     \end{lstlisting}
     Ensuite, nous vérifions si l'article n'existe pas. \Cad{} si
     \begin{lstlisting}[style=sql, gobble=8]

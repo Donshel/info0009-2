@@ -39,6 +39,11 @@ if ($type == 'articles_conferences') {
 	}
 }
 
+if (!isset($sujets_articles)) {
+	echo "Sujet(s) de l'article non spécifié.";
+	exit;
+}
+
 $response = $pdo->query("DESC articles;");
 $desc = $response->fetchAll(PDO::FETCH_NUM);
 
@@ -62,7 +67,7 @@ foreach ($desc as $attr) {
 // Compatibilité et existence
 
 if ($type == 'articles_conferences') {
-	if (substr($date_publication, 0, 4) != $annee_conference) {
+	if (date('Y', strtotime($date_publication)) != $annee_conference) {
 		echo "Incompatibilité : La date de publication n'est pas dans l'année de la conférence ($annee_conference).";
 		exit;
 	}
@@ -106,7 +111,7 @@ if ($type == 'articles_conferences') {
 
 	$annee_journal = substr($table[0][0], 0, 4);
 
-	if (substr($date_publication, 0, 4) != $annee_journal) {
+	if (date('Y', strtotime($date_publication)) != $annee_journal) {
 		echo "Incompatibilité : La date de publication n'est pas de la même année que les autres publications du journal ($annee_journal).";
 		exit;
 	}
@@ -116,11 +121,8 @@ if ($type == 'articles_conferences') {
 $pdo->beginTransaction();
 
 // LOCK
-$sql = "LOCK TABLES articles WRITE, $type WRITE";
+$sql = "LOCK TABLES articles WRITE, $type WRITE, sujets_articles WRITE";
 
-if (isset($sujets_articles)) {
-	$sql .= ", sujets_articles WRITE";
-}
 if (isset($seconds_auteurs)) {
 	$sql .= ", seconds_auteurs WRITE, auteurs READ";
 }
@@ -156,6 +158,7 @@ if (!$pdo->query($sql)) {
 	exit;
 }
 
+// articles_conferences or articles_journaux
 if ($type == 'articles_conferences') {
 	$sql = "INSERT INTO $type (url, presentation, nom_conference, annee_conference) VALUES ('$url', '$presentation', '$nom_conference', $annee_conference);";
 } else {
@@ -169,25 +172,25 @@ if (!$pdo->query($sql)) {
 	exit;
 }
 
-if (isset($sujets_articles)) {
-	$sql = "INSERT INTO sujets_articles (url, sujet) VALUES ";
+// sujets_articles
+$sql = "INSERT INTO sujets_articles (url, sujet) VALUES ";
 
-	$sujets_articles = explode(",", $sujets_articles);
-	foreach ($sujets_articles as &$sujet) {
-		$sujet = trim($sujet);
-		$sql .= "('$url', '$sujet'),";
-	}
-
-	$sql = substr($sql, 0, -1).";";
-
-	if (!$pdo->query($sql)) {
-		echo "Error pendant l'insertion dans la table 'sujets_articles'.";
-		$pdo->rollback();
-		$pdo->query("UNLOCK TABLES;");
-		exit;
-	}
+$sujets_articles = explode(",", $sujets_articles);
+foreach ($sujets_articles as &$sujet) {
+	$sujet = trim($sujet);
+	$sql .= "('$url', '$sujet'),";
 }
 
+$sql = substr($sql, 0, -1).";";
+
+if (!$pdo->query($sql)) {
+	echo "Error pendant l'insertion dans la table 'sujets_articles'.";
+	$pdo->rollback();
+	$pdo->query("UNLOCK TABLES;");
+	exit;
+}
+
+// seconds_auteurs
 if (isset($seconds_auteurs)) {
 	$sql = "INSERT INTO seconds_auteurs (url, matricule) VALUES ";
 
