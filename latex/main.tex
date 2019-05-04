@@ -78,13 +78,14 @@
     \renewcommand\thesubsection{\thesection.\alph{subsection}}
     \subsection{Recherche par contraintes}
     La requête est exécutée par le script \texttt{include/questions/q2a.php}.
-    \lstinputlisting[style=NtbFphp, caption=\texttt{q2a.php} -- Construction de la requête \texttt{SQL}, firstnumber=18, firstline=18, lastline=33]{resources/php/q2a.php}
+    \lstinputlisting[style=NtbFphp, caption=\texttt{q2a.php} -- Construction de la requête \texttt{SQL}, firstnumber=18, firstline=18, lastline=36]{resources/php/q2a.php}
     Ce dernier reçoit, par l'intermidiaire du script \texttt{resources/js/questions/q2a.js}, un tableau (\texttt{\$\_GET}) dont les couples \emph{clé-valeur} définissent les contraintes sur la recherche. \par
     La valeur associée à la clé \texttt{table} est le nom de la table dans laquelle sont recherchés les éléments et les autres clés sont les noms des attributs contraints. Il est à noter que seuls sont considérés les couples dont la clé correspond à un attribut de la table. \par
-    Si un attribut est un nombre, \cad{} si son \emph{type} dans la description (\texttt{DESC tablename;}) de la table contient la chaîne \texttt{int}, nous utilisons une contrainte d'égalité (\texttt{= value}) et, le cas échéant, une contrainte de contenance (\texttt{LIKE '\%value\%'}). Pour ne pas tenir compte de la casse, la commande \texttt{COLLATE UTF8\_GENERAL\_CI} est utilisée. \par
-    En finalité, nous obtenons une requête du type 
+    Si un attribut est un nombre, \cad{} si son \emph{type} dans la description (\texttt{DESC tablename;}) de la table contient la chaîne \texttt{int}, nous utilisons une contrainte d'égalité (\texttt{= value}) et, le cas échéant, une contrainte de contenance (\texttt{LIKE '\%value\%'})\footnotemark{}. Pour ne pas tenir compte de la casse ou des accents, la commande \texttt{COLLATE UTF8\_GENERAL\_CI} est utilisée. \par
+    Cependant, cette méthode ne fonctionne pas avec les attributs de type \texttt{date} car ils ne sont pas stockés comme des chaînes de caractères en \texttt{SQL}. Pour parer à ce problème nous aurions pu convertir, à l'aide de la commande \texttt{CONVERT}, les attributs de type \texttt{date} en \texttt{varchar} pour ensuite effectuer la recherche à l'aide de \texttt{LIKE}. Malheureusement, cette commande n'est pas disponible sur le serveur mis à notre disposition. Nous avons donc abondonné la recherche par contenance pour les dates et l'avons remplacée par une contrainte d'égalité. \par
+    En finalité, nous obtenons une requête du type
     \begin{lstlisting}[style=sql, gobble=8]
-        SELECT * FROM $tablename WHERE $attr0 = $value0 AND $attr1 COLLATE UTF8_GENERAL_CI LIKE '%$value1%' AND ... AND 1;
+        SELECT * FROM $tablename WHERE $attr0 = $value0 AND $attr1 COLLATE UTF8_GENERAL_CI LIKE '%$value1%' AND $attr2 = '$Y-$m-$d' AND ... AND 1;
     \end{lstlisting}
     Le \texttt{1} terminal n'est normalement pas nécessaire, mais il a été ajouté pour neutraliser le dernier \texttt{AND}.
     \subsection{Ensemble de publications}

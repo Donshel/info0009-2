@@ -19,12 +19,15 @@ $sql = "SELECT * FROM $tablename WHERE ";
 
 foreach ($desc as $attr) {
 	if (isset($_GET[$attr[0]])) {
-
-		$pos = strpos($attr[1], 'int');
-		if (!$pos && $pos !== 0) {
-			$sql .= $attr[0]." COLLATE UTF8_GENERAL_CI LIKE '%".$_GET[$attr[0]]."%'";
+		if ($attr[1] == 'date') {
+			$sql .= $attr[0]." = '".date('Y-m-d', strtotime($_GET[$attr[0]]))."'";
 		} else {
-			$sql .= $attr[0]." = ".$_GET[$attr[0]];
+			$pos = strpos($attr[1], 'int');
+			if (!$pos && $pos !== 0) {
+				$sql .= $attr[0]." COLLATE UTF8_GENERAL_CI LIKE '%".$_GET[$attr[0]]."%'";
+			} else {
+				$sql .= $attr[0]." = ".$_GET[$attr[0]];
+			}
 		}
 		$sql .= " AND ";
 	}
