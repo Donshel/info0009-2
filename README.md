@@ -13,3 +13,7 @@ Projet réalisé sous la direction de **Remy Vandaele** dans le cadre du cours *
 * **Simon Bernard**
 * **François Rozet** - [Donshel](https://github.com/Donshel)
 * **Ivan Klapka**
+
+## Note
+
+Ce projet a reçu la note de 19.5/20.
