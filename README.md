@@ -10,9 +10,7 @@ Projet réalisé sous la direction de **Remy Vandaele** dans le cadre du cours *
 
 ## Auteurs
 
-* **Simon Bernard**
-* **François Rozet** - [Donshel](https://github.com/Donshel)
-* **Ivan Klapka**
+* **François Rozet** - [francois-rozet](https://github.com/francois-rozet)
 
 ## Note
 
